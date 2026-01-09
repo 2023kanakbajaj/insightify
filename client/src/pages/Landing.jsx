@@ -1,54 +1,101 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import { BarChart2, Zap, MessageSquare } from 'lucide-react';
+import LandingCarousel from '../components/LandingCarousel';
+import AppInput from '../components/AppInput';
+import FeatureCard from '../components/FeatureCard';
+import './Landing.css';
 
 export default function Landing() {
-    const navigate = useNavigate();
-
     return (
-        <div className="min-h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-black text-white p-8">
-            <header className="flex justify-between items-center mb-20">
-                <h1 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-pink-600">
-                    Insightify
-                </h1>
-                <button onClick={() => navigate('/login')} className="bg-white/10 hover:bg-white/20 px-6 py-2 rounded-full backdrop-blur-sm transition">
-                    Login
-                </button>
-            </header>
+        <div className="landing-page">
+            {/* Navbar is now handled by Layout */}
 
-            <main className="max-w-4xl mx-auto text-center">
-                <h2 className="text-6xl font-extrabold mb-6 leading-tight">
-                    Transform Reviews into <br />
-                    <span className="text-blue-400">Actionable Growth</span>
-                </h2>
-                <p className="text-xl text-gray-300 mb-10 max-w-2xl mx-auto">
-                    AI-powered analytics for your Play Store apps. Detect uninstall reasons, chat with your data, and get retention insights.
-                </p>
+            {/* Hero Section */}
+            <div className="hero-section">
+                <div className="hero-glow"></div>
 
-                <div className="flex justify-center gap-4">
-                    <button
-                        onClick={() => navigate('/dashboard')}
-                        className="bg-blue-600 hover:bg-blue-500 px-8 py-4 rounded-xl font-bold text-lg shadow-lg shadow-blue-500/30 transition transform hover:scale-105"
-                    >
-                        Analyze My App
-                    </button>
-                    <button className="bg-white/5 border border-white/10 hover:bg-white/10 px-8 py-4 rounded-xl font-semibold text-lg transition">
-                        View Live Demo
-                    </button>
+                <div className="hero-content">
+                    <div className="hero-badge">
+                        <span className="blink-dot"></span>
+                        <span>Powered by Gemini 1.5 + RAG</span>
+                    </div>
+
+                    <h1 className="hero-title">
+                        Transform Reviews into <br />
+                        <span className="highlight-gradient">Actionable Growth</span>
+                    </h1>
+
+                    <p className="hero-subtitle">
+                        Stop guessing why users uninstall. Let our AI analyze review patterns, providing you with data-driven retention strategies in seconds.
+                    </p>
+
+                    <div className="hero-input-area">
+                        <AppInput />
+                        <p style={{ marginTop: '1rem', color: '#64748b', fontSize: '0.875rem' }}>Try "Spotify", "Duolingo", or paste a link</p>
+                    </div>
                 </div>
 
-                <div className="mt-20 grid grid-cols-1 md:grid-cols-3 gap-8 text-left">
-                    {[
-                        { title: 'Why Uninstall?', desc: 'Detect exact reasons like Battery Drain or Login fail.' },
-                        { title: 'Voice Mentor', desc: 'Talk to an AI expert about your growth strategy.' },
-                        { title: 'Competitor Intel', desc: 'Compare your app vs others and find gaps.' }
-                    ].map((feature, idx) => (
-                        <div key={idx} className="bg-white/5 p-6 rounded-2xl border border-white/10 hover:border-blue-500/50 transition">
-                            <h3 className="text-xl font-bold mb-2">{feature.title}</h3>
-                            <p className="text-gray-400">{feature.desc}</p>
-                        </div>
-                    ))}
+                {/* 3D Carousel (This component handles its own internal layout, but container needs margin) */}
+                <div style={{ marginBottom: '8rem' }}>
+                    <LandingCarousel />
                 </div>
-            </main>
+            </div>
+
+            {/* Dashboard Preview Section */}
+            <div className="dashboard-preview">
+                <div className="preview-container">
+                    <img
+                        src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?q=80&w=2940&auto=format&fit=crop"
+                        alt="Dashboard Preview"
+                        className="preview-image"
+                    />
+                </div>
+            </div>
+
+            {/* Features Grid */}
+            <div className="features-section">
+                <h2 className="section-title">Intelligence at every layer</h2>
+
+                <div className="features-grid">
+                    <FeatureCard
+                        icon={BarChart2}
+                        title="Review Analysis"
+                        description="Identify sediment shifts and topic clusters automatically from user feedback."
+                        color="#60a5fa"
+                    />
+                    <FeatureCard
+                        icon={Zap}
+                        title="Feature Mining"
+                        description="Discover requested features hidden deep within thousands of reviews."
+                        color="#facc15"
+                    />
+                    <FeatureCard
+                        icon={MessageSquare}
+                        title="Voice AI Mentor"
+                        description="Chat with your data. Ask strategic questions and get instant, sourced answers."
+                        color="#c084fc"
+                    />
+                    <FeatureCard
+                        icon={BarChart2}
+                        title="Competitor Intel"
+                        description="Compare your performance metrics directly against your top competitors."
+                        color="#4ade80"
+                    />
+                </div>
+            </div>
+
+            {/* Social Proof / Trust */}
+            <div className="social-proof-section">
+                <h2 style={{ fontSize: '1.5rem', fontWeight: 600, color: '#e2e8f0' }}>Trusted by developers building next-gen apps</h2>
+                <div className="company-logos">
+                    <div style={{ fontSize: '1.25rem', fontWeight: 700 }}>ACME Corp</div>
+                    <div style={{ fontSize: '1.25rem', fontWeight: 700 }}>Stark Industries</div>
+                    <div style={{ fontSize: '1.25rem', fontWeight: 700 }}>Wayne Tech</div>
+                    <div style={{ fontSize: '1.25rem', fontWeight: 700 }}>Cyberdyne</div>
+                </div>
+            </div>
+
+            {/* Footer is now handled by Layout */}
         </div>
     );
 }
