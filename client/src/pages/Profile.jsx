@@ -1,45 +1,73 @@
-import React, { useState } from 'react';
+// client/src/pages/Profile.jsx
+import { useAuth } from "../context/authcontext";
+import { useNavigate } from "react-router-dom";
 
-export default function Profile() {
-    const [user, setUser] = useState({
-        name: "Demo User",
-        email: "demo@insightify.com",
-        role: "Admin"
-    });
+const Profile = () => {
+  const { user, logout } = useAuth(); // <--- Get REAL user data here
+  const navigate = useNavigate();
 
-    return (
-        <div className="min-h-screen bg-gray-50 flex justify-center items-center p-6">
-            <div className="bg-white p-8 rounded-2xl shadow-sm border border-gray-200 w-full max-w-2xl">
-                <h2 className="text-3xl font-bold mb-6 text-gray-800">User Profile</h2>
+  const handleLogout = async () => {
+    try {
+      await logout();
+      navigate("/"); // Send them back to home after logging out
+    } catch (error) {
+      console.error("Failed to log out", error);
+    }
+  };
 
-                <div className="flex items-center gap-6 mb-8">
-                    <div className="w-20 h-20 bg-blue-600 rounded-full flex items-center justify-center text-white text-2xl font-bold">
-                        {user.name.charAt(0)}
-                    </div>
-                    <div>
-                        <h3 className="text-xl font-semibold">{user.name}</h3>
-                        <p className="text-gray-500">{user.email}</p>
-                        <span className="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full mt-2 inline-block">
-                            {user.role}
-                        </span>
-                    </div>
-                </div>
+  // If page loads but user isn't logged in yet (rare split-second case)
+  if (!user) return <div className="p-10 text-center">Loading profile...</div>;
 
-                <div className="border-t pt-6">
-                    <h4 className="text-lg font-semibold mb-4">Saved Analyses</h4>
-                    <div className="space-y-3">
-                        {[1, 2, 3].map(i => (
-                            <div key={i} className="flex justify-between items-center p-4 bg-gray-50 rounded-xl hover:bg-gray-100 transition cursor-pointer">
-                                <div>
-                                    <p className="font-medium text-gray-900">Angry Birds Review Analysis</p>
-                                    <p className="text-sm text-gray-500">Jan {10 + i}, 2026</p>
-                                </div>
-                                <button className="text-blue-600 hover:underline text-sm">View Report</button>
-                            </div>
-                        ))}
-                    </div>
-                </div>
-            </div>
+  return (
+    <div className="min-h-screen bg-gray-50 flex justify-center items-center p-6">
+      <div className="bg-white p-8 rounded-2xl shadow-sm border border-gray-200 w-full max-w-2xl">
+        <div className="flex justify-between items-center mb-6">
+          <h2 className="text-3xl font-bold text-gray-800">Your Profile</h2>
+          <button 
+            onClick={handleLogout}
+            className="text-sm text-red-600 hover:text-red-700 font-medium border border-red-200 px-4 py-2 rounded-lg hover:bg-red-50 transition-colors"
+          >
+            Sign Out
+          </button>
         </div>
-    );
-}
+
+        <div className="flex items-center gap-6 mb-8">
+          {/* REAL User Profile Pic from Google */}
+          {user.photoURL ? (
+            <img 
+              src={user.photoURL} 
+              alt="Profile" 
+              className="w-20 h-20 rounded-full border-4 border-blue-50"
+            />
+          ) : (
+            <div className="w-20 h-20 bg-blue-600 rounded-full flex items-center justify-center text-white text-2xl font-bold">
+              {user.displayName?.charAt(0) || "U"}
+            </div>
+          )}
+
+          <div>
+            {/* REAL User Name & Email */}
+            <h3 className="text-xl font-semibold text-gray-900">{user.displayName}</h3>
+            <p className="text-gray-500">{user.email}</p>
+            <span className="bg-green-100 text-green-800 text-xs px-2 py-1 rounded-full mt-2 inline-block">
+              Verified Analyst
+            </span>
+          </div>
+        </div>
+
+        <div className="border-t pt-6">
+          <h4 className="text-lg font-semibold mb-4 text-gray-800">Recent Activity</h4>
+          <div className="space-y-3">
+             {/* We will eventually pull this from the Database! */}
+            <div className="p-4 bg-gray-50 rounded-xl border border-gray-100">
+              <p className="font-medium text-gray-900">Account Created</p>
+              <p className="text-sm text-gray-500">Welcome to Insightify!</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default Profile;
