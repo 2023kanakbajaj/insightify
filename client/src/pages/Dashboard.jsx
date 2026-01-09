@@ -1,71 +1,99 @@
-import React, { useState } from 'react';
+import React from 'react';
+import { TrendingUp, Users, AlertTriangle } from 'lucide-react';
+import { PieChart, Pie, Cell, ResponsiveContainer } from 'recharts';
 
 export default function Dashboard() {
-    const [activeTab, setActiveTab] = useState('overview');
-
-    const tabs = [
-        { id: 'overview', label: 'Overview' },
-        { id: 'trends', label: 'Ratings & Trends' },
-        { id: 'sentiment', label: 'Sentiment' },
-        { id: 'uninstall', label: 'Why Uninstall?' },
-        { id: 'features', label: 'Feature Mining' },
-        { id: 'alerts', label: 'Alerts' },
+    const sentimentData = [
+        { name: 'Positive', value: 65, color: '#10B981' },
+        { name: 'Neutral', value: 25, color: '#F59E0B' },
+        { name: 'Negative', value: 10, color: '#EF4444' },
     ];
 
     return (
-        <div className="flex h-screen bg-gray-50">
-            {/* Sidebar - Simplified */}
-            <div className="w-64 bg-white border-r p-4">
-                <h1 className="text-xl font-bold mb-8 text-blue-600">Insightify</h1>
-                <nav className="space-y-2">
-                    {tabs.map(tab => (
-                        <button
-                            key={tab.id}
-                            onClick={() => setActiveTab(tab.id)}
-                            className={`w-full text-left px-4 py-2 rounded-lg transition ${activeTab === tab.id ? 'bg-blue-50 text-blue-600 font-semibold' : 'text-gray-600 hover:bg-gray-100'}`}
-                        >
-                            {tab.label}
-                        </button>
-                    ))}
-                    <div className="h-px bg-gray-200 my-4" />
-                    <button className="w-full text-left px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg">Voice Mentor</button>
-                    <button className="w-full text-left px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg">Settings</button>
-                </nav>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-xl)', padding: 'var(--space-xl)' }}>
+
+            {/* Page Title */}
+            <div>
+                <h1 style={{ fontSize: '2rem', marginBottom: '0.5rem' }}>Overview</h1>
+                <p className="text-muted">Welcome back, here's what's happening with your app.</p>
             </div>
 
-            {/* Main Content */}
-            <div className="flex-1 overflow-auto p-8">
-                <header className="flex justify-between items-center mb-8">
-                    <h2 className="text-2xl font-bold capitalize">{activeTab}</h2>
-                    <div className="bg-white px-4 py-2 rounded-lg shadow-sm border text-sm">
-                        App: <strong>Insightify Demo</strong> (v2.1.0)
+            {/* Stats Grid */}
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: 'var(--space-lg)' }}>
+
+                {/* Card 1: Total Reviews */}
+                <div className="glass-panel" style={{ padding: 'var(--space-lg)', position: 'relative', overflow: 'hidden' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                        <div>
+                            <h3 className="text-muted" style={{ fontSize: '0.9rem', fontWeight: 500 }}>Total Reviews</h3>
+                            <div style={{ fontSize: '2.5rem', fontWeight: 700, margin: '0.5rem 0' }}>12,450</div>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--color-success)', fontSize: '0.9rem' }}>
+                                <TrendingUp size={16} />
+                                <span>+15% this week</span>
+                            </div>
+                        </div>
+                        <div style={{
+                            background: 'rgba(139, 92, 246, 0.1)',
+                            padding: '0.5rem',
+                            borderRadius: 'var(--radius-md)',
+                            color: 'var(--color-primary)'
+                        }}>
+                            <Users size={24} />
+                        </div>
                     </div>
-                </header>
+                </div>
 
-                {/* Dynamic Content Area */}
-                <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-200 min-h-[500px]">
-                    {activeTab === 'overview' && (
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                            <div className="bg-blue-50 p-6 rounded-xl border border-blue-100">
-                                <h3 className="text-gray-500 text-sm mb-2">Total Reviews</h3>
-                                <p className="text-3xl font-bold text-blue-900">12,450</p>
-                            </div>
-                            <div className="bg-green-50 p-6 rounded-xl border border-green-100">
-                                <h3 className="text-gray-500 text-sm mb-2">Avg Rating</h3>
-                                <p className="text-3xl font-bold text-green-900">4.2 ★</p>
-                            </div>
-                            <div className="bg-red-50 p-6 rounded-xl border border-red-100">
-                                <h3 className="text-gray-500 text-sm mb-2">Critical Alerts</h3>
-                                <p className="text-3xl font-bold text-red-900">3 New</p>
+                {/* Card 2: Sentiment Analysis */}
+                <div className="glass-panel" style={{ padding: 'var(--space-lg)' }}>
+                    <h3 className="text-muted" style={{ fontSize: '0.9rem', fontWeight: 500, marginBottom: '1rem' }}>Sentiment Analysis</h3>
+                    <div style={{ height: '120px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                        <ResponsiveContainer width="100%" height="100%">
+                            <PieChart>
+                                <Pie
+                                    data={sentimentData}
+                                    cx="50%"
+                                    cy="50%"
+                                    innerRadius={40}
+                                    outerRadius={55}
+                                    paddingAngle={5}
+                                    dataKey="value"
+                                >
+                                    {sentimentData.map((entry, index) => (
+                                        <Cell key={`cell-${index}`} fill={entry.color} stroke="none" />
+                                    ))}
+                                </Pie>
+                            </PieChart>
+                        </ResponsiveContainer>
+                        <div style={{ marginLeft: '1rem' }}>
+                            {sentimentData.map(item => (
+                                <div key={item.name} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.8rem', marginBottom: '0.25rem' }}>
+                                    <div style={{ width: 8, height: 8, borderRadius: '50%', background: item.color }} />
+                                    <span style={{ color: 'var(--color-text-muted)' }}>{item.name} ({item.value}%)</span>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                </div>
+
+                {/* Card 3: Alerts */}
+                <div className="glass-panel" style={{ padding: 'var(--space-lg)' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                        <div>
+                            <h3 className="text-muted" style={{ fontSize: '0.9rem', fontWeight: 500 }}>Critical Alerts</h3>
+                            <div style={{ fontSize: '2.5rem', fontWeight: 700, margin: '0.5rem 0' }}>3</div>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--color-text-muted)', fontSize: '0.9rem' }}>
+                                <span>Requires attention</span>
                             </div>
                         </div>
-                    )}
-
-                    {activeTab !== 'overview' && (
-                        <div className="flex items-center justify-center h-full text-gray-400">
-                            Placeholder for {tabs.find(t => t.id === activeTab)?.label}
+                        <div style={{
+                            background: 'rgba(239, 68, 68, 0.1)',
+                            padding: '0.5rem',
+                            borderRadius: 'var(--radius-md)',
+                            color: 'var(--color-error)'
+                        }}>
+                            <AlertTriangle size={24} />
                         </div>
-                    )}
+                    </div>
                 </div>
             </div>
         </div>

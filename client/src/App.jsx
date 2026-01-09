@@ -1,8 +1,9 @@
 // client/src/App.jsx
-import { AuthProvider } from "./context/authcontext"; // <--- 1. Import this
+import { AuthProvider } from "./context/authcontext";
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
+import Layout from "./components/Layout";
 
-// Your existing page imports
+// Pages
 import Landing from "./pages/Landing";
 import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
@@ -11,16 +12,35 @@ import Profile from "./pages/Profile";
 
 function App() {
   return (
-    // 2. Wrap EVERYTHING in AuthProvider
     <AuthProvider>
       <Router>
         <Routes>
-          <Route path="/" element={<Landing />} />
+          <Route path="/" element={
+            <Layout>
+              <Landing />
+            </Layout>
+          } />
           <Route path="/login" element={<Login />} />
-          <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/voice-agent" element={<VoiceAgent />} />
-          <Route path="/profile" element={<Profile />} />
-          
+
+          {/* Authenticated Routes with Layout */}
+          <Route path="/dashboard" element={
+            <Layout>
+              <Dashboard />
+            </Layout>
+          } />
+
+          <Route path="/voice-agent" element={
+            <Layout>
+              <VoiceAgent />
+            </Layout>
+          } />
+
+          <Route path="/profile" element={
+            <Layout>
+              <Profile />
+            </Layout>
+          } />
+
           {/* Catch-all route */}
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
