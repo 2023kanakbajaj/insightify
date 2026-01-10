@@ -36,6 +36,7 @@ import {
   Legend,
   Area,
   AreaChart,
+  ComposedChart,
 } from "recharts";
 
 // ============================================
@@ -182,6 +183,51 @@ const uninstallReasons = [
   { reason: "Privacy concerns", percentage: 10, count: 873 },
 ];
 
+const reviewResponseData = [
+  {
+    month: "Jul 2025",
+    responseRate: 68,
+    avgResponseTime: 3.2,
+    totalResponses: 5602,
+  },
+  {
+    month: "Aug 2025",
+    responseRate: 72,
+    avgResponseTime: 2.8,
+    totalResponses: 6569,
+  },
+  {
+    month: "Sep 2025",
+    responseRate: 65,
+    avgResponseTime: 4.1,
+    totalResponses: 7446,
+  },
+  {
+    month: "Oct 2025",
+    responseRate: 58,
+    avgResponseTime: 5.3,
+    totalResponses: 6372,
+  },
+  {
+    month: "Nov 2025",
+    responseRate: 61,
+    avgResponseTime: 4.7,
+    totalResponses: 7530,
+  },
+  {
+    month: "Dec 2025",
+    responseRate: 75,
+    avgResponseTime: 2.5,
+    totalResponses: 10407,
+  },
+  {
+    month: "Jan 2026",
+    responseRate: 78,
+    avgResponseTime: 2.1,
+    totalResponses: 11882,
+  },
+];
+
 const versionComparison = {
   before: { version: "v3.1.5", rating: 4.5, sentiment: 70, crashes: 3.2 },
   after: { version: "v3.2.0", rating: 4.0, sentiment: 58, crashes: 8.7 },
@@ -305,11 +351,11 @@ const CustomTooltip = ({ active, payload, label }) => {
     return (
       <div
         style={{
-          background: "rgba(10, 10, 10, 0.98)",
-          border: "1px solid #4f46e5",
+          background: "rgba(0, 0, 0, 0.95)",
+          border: "1px solid #333333",
           borderRadius: "8px",
           padding: "12px",
-          boxShadow: "0 4px 16px rgba(79, 70, 229, 0.6)",
+          boxShadow: "0 4px 16px rgba(0, 0, 0, 0.8)",
         }}
       >
         <p
@@ -325,9 +371,12 @@ const CustomTooltip = ({ active, payload, label }) => {
         {payload.map((entry, index) => (
           <p
             key={index}
-            style={{ margin: 0, color: entry.color, fontSize: "0.875rem" }}
+            style={{ margin: 0, color: "#999999", fontSize: "0.875rem" }}
           >
-            {entry.name}: {entry.value}
+            <span style={{ color: "#ffffff", fontWeight: 600 }}>
+              {entry.name}:
+            </span>{" "}
+            {entry.value}
           </p>
         ))}
       </div>
@@ -353,9 +402,9 @@ const getSeverityColor = (severity) => {
 const getPriorityColor = (priority) => {
   switch (priority) {
     case "High":
-      return "#000000";
+      return "#808080";
     case "Medium":
-      return "#404040";
+      return "#404808080040";
     case "Low":
       return "#808080";
     default:
@@ -672,376 +721,397 @@ export default function Dashboard() {
             </div>
           </div>
 
-        {/* Average Rating */}
-        <div
-          className="glass-panel"
-          style={{
-            padding: "var(--space-lg)",
-            position: "relative",
-            overflow: "hidden",
-            transition: "all 0.3s ease",
-            cursor: "pointer",
-          }}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.transform = "translateY(-4px)";
-            e.currentTarget.style.boxShadow =
-              "0 10px 15px -3px rgba(255, 255, 255, 0.1), 0 4px 6px -2px rgba(255, 255, 255, 0.05)";
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.transform = "translateY(0)";
-            e.currentTarget.style.boxShadow = "none";
-          }}
-        >
+          {/* Average Rating */}
           <div
+            className="glass-panel"
             style={{
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "flex-start",
+              padding: "var(--space-lg)",
+              position: "relative",
+              overflow: "hidden",
+              transition: "all 0.3s ease",
+              cursor: "pointer",
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.transform = "translateY(-4px)";
+              e.currentTarget.style.boxShadow =
+                "0 10px 15px -3px rgba(255, 255, 255, 0.1), 0 4px 6px -2px rgba(255, 255, 255, 0.05)";
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.transform = "translateY(0)";
+              e.currentTarget.style.boxShadow = "none";
             }}
           >
-            <div>
-              <p
-                style={{
-                  fontSize: "0.875rem",
-                  color: "var(--color-text-muted)",
-                  marginBottom: "0.5rem",
-                }}
-              >
-                Average Rating
-              </p>
-              <h2
-                style={{
-                  fontSize: "2.5rem",
-                  fontWeight: 700,
-                  margin: "0.5rem 0",
-                  display: "flex",
-                  alignItems: "center",
-                  gap: "0.5rem",
-                }}
-              >
-                <Star size={32} fill="#ffffff" color="#ffffff" />
-                {topMetrics.averageRating}
-              </h2>
-              <div
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: "0.5rem",
-                  color: "#999999",
-                }}
-              >
-                <TrendingDown size={16} />
-                <span style={{ fontSize: "0.875rem" }}>-0.3 vs last month</span>
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "flex-start",
+              }}
+            >
+              <div>
+                <p
+                  style={{
+                    fontSize: "0.875rem",
+                    color: "var(--color-text-muted)",
+                    marginBottom: "0.5rem",
+                  }}
+                >
+                  Average Rating
+                </p>
+                <h2
+                  style={{
+                    fontSize: "2.5rem",
+                    fontWeight: 700,
+                    margin: "0.5rem 0",
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "0.5rem",
+                  }}
+                >
+                  <Star size={32} fill="#ffffff" color="#ffffff" />
+                  {topMetrics.averageRating}
+                </h2>
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "0.5rem",
+                    color: "#999999",
+                  }}
+                >
+                  <TrendingDown size={16} />
+                  <span style={{ fontSize: "0.875rem" }}>
+                    -0.3 vs last month
+                  </span>
+                </div>
               </div>
             </div>
           </div>
-        </div>
 
-        {/* App Health Score */}
-        <div
-          className="glass-panel"
-          style={{
-            padding: "var(--space-lg)",
-            position: "relative",
-            overflow: "hidden",
-            transition: "all 0.3s ease",
-            cursor: "pointer",
-          }}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.transform = "translateY(-4px)";
-            e.currentTarget.style.boxShadow =
-              "0 10px 15px -3px rgba(255, 255, 255, 0.1), 0 4px 6px -2px rgba(255, 255, 255, 0.05)";
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.transform = "translateY(0)";
-            e.currentTarget.style.boxShadow = "none";
-          }}
-        >
+          {/* App Health Score */}
           <div
+            className="glass-panel"
             style={{
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "flex-start",
+              padding: "var(--space-lg)",
+              position: "relative",
+              overflow: "hidden",
+              transition: "all 0.3s ease",
+              cursor: "pointer",
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.transform = "translateY(-4px)";
+              e.currentTarget.style.boxShadow =
+                "0 10px 15px -3px rgba(255, 255, 255, 0.1), 0 4px 6px -2px rgba(255, 255, 255, 0.05)";
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.transform = "translateY(0)";
+              e.currentTarget.style.boxShadow = "none";
             }}
           >
-            <div>
-              <p
-                style={{
-                  fontSize: "0.875rem",
-                  color: "var(--color-text-muted)",
-                  marginBottom: "0.5rem",
-                }}
-              >
-                App Health Score
-              </p>
-              <h2
-                style={{
-                  fontSize: "2.5rem",
-                  fontWeight: 700,
-                  margin: "0.5rem 0",
-                }}
-              >
-                {topMetrics.healthScore}/100
-              </h2>
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "flex-start",
+              }}
+            >
+              <div>
+                <p
+                  style={{
+                    fontSize: "0.875rem",
+                    color: "var(--color-text-muted)",
+                    marginBottom: "0.5rem",
+                  }}
+                >
+                  App Health Score
+                </p>
+                <h2
+                  style={{
+                    fontSize: "2.5rem",
+                    fontWeight: 700,
+                    margin: "0.5rem 0",
+                  }}
+                >
+                  {topMetrics.healthScore}/100
+                </h2>
+                <div
+                  style={{
+                    width: "100%",
+                    height: "6px",
+                    background: "#1a1a1a",
+                    borderRadius: "999px",
+                    overflow: "hidden",
+                    marginTop: "0.5rem",
+                  }}
+                >
+                  <div
+                    style={{
+                      width: `${topMetrics.healthScore}%`,
+                      height: "100%",
+                      background:
+                        topMetrics.healthScore > 70
+                          ? "#ffffff"
+                          : topMetrics.healthScore > 50
+                          ? "#bfbfbf"
+                          : "#999999",
+                      borderRadius: "999px",
+                      transition: "width 0.3s",
+                    }}
+                  />
+                </div>
+              </div>
               <div
                 style={{
-                  width: "100%",
-                  height: "6px",
                   background: "#1a1a1a",
-                  borderRadius: "999px",
-                  overflow: "hidden",
-                  marginTop: "0.5rem",
+                  padding: "0.75rem",
+                  borderRadius: "var(--radius-md)",
+                  color: "#ffffff",
+                }}
+              >
+                <Activity size={24} />
+              </div>
+            </div>
+          </div>
+
+          {/* Sentiment Breakdown */}
+          <div
+            className="glass-panel"
+            style={{
+              padding: "var(--space-lg)",
+              position: "relative",
+              overflow: "hidden",
+              transition: "all 0.3s ease",
+              cursor: "pointer",
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.transform = "translateY(-4px)";
+              e.currentTarget.style.boxShadow =
+                "0 10px 15px -3px rgba(255, 255, 255, 0.1), 0 4px 6px -2px rgba(255, 255, 255, 0.05)";
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.transform = "translateY(0)";
+              e.currentTarget.style.boxShadow = "none";
+            }}
+          >
+            <p
+              style={{
+                fontSize: "0.875rem",
+                color: "var(--color-text-muted)",
+                marginBottom: "1rem",
+              }}
+            >
+              Sentiment Breakdown
+            </p>
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                gap: "0.75rem",
+              }}
+            >
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
                 }}
               >
                 <div
                   style={{
-                    width: `${topMetrics.healthScore}%`,
-                    height: "100%",
-                    background:
-                      topMetrics.healthScore > 70
-                        ? "#ffffff"
-                        : topMetrics.healthScore > 50
-                        ? "#bfbfbf"
-                        : "#999999",
-                    borderRadius: "999px",
-                    transition: "width 0.3s",
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "0.5rem",
                   }}
-                />
+                >
+                  <ThumbsUp size={16} color="#d2d2d2" />
+                  <span>Positive</span>
+                </div>
+                <span style={{ fontWeight: 700, fontSize: "1.25rem" }}>
+                  {topMetrics.sentimentBreakdown.positive}%
+                </span>
+              </div>
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                }}
+              >
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "0.5rem",
+                  }}
+                >
+                  <Minus size={16} color="#999999" />
+                  <span>Neutral</span>
+                </div>
+                <span style={{ fontWeight: 700, fontSize: "1.25rem" }}>
+                  {topMetrics.sentimentBreakdown.neutral}%
+                </span>
+              </div>
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                }}
+              >
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "0.5rem",
+                  }}
+                >
+                  <ThumbsDown size={16} color="#e5e5e5" />
+                  <span>Negative</span>
+                </div>
+                <span style={{ fontWeight: 700, fontSize: "1.25rem" }}>
+                  {topMetrics.sentimentBreakdown.negative}%
+                </span>
               </div>
             </div>
-            <div
-              style={{
-                background: "#1a1a1a",
-                padding: "0.75rem",
-                borderRadius: "var(--radius-md)",
-                color: "#ffffff",
-              }}
-            >
-              <Activity size={24} />
-            </div>
           </div>
-        </div>
 
-        {/* Sentiment Breakdown */}
-        <div
-          className="glass-panel"
-          style={{
-            padding: "var(--space-lg)",
-            position: "relative",
-            overflow: "hidden",
-            transition: "all 0.3s ease",
-            cursor: "pointer",
-          }}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.transform = "translateY(-4px)";
-            e.currentTarget.style.boxShadow =
-              "0 10px 15px -3px rgba(255, 255, 255, 0.1), 0 4px 6px -2px rgba(255, 255, 255, 0.05)";
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.transform = "translateY(0)";
-            e.currentTarget.style.boxShadow = "none";
-          }}
-        >
-          <p
-            style={{
-              fontSize: "0.875rem",
-              color: "var(--color-text-muted)",
-              marginBottom: "1rem",
-            }}
-          >
-            Sentiment Breakdown
-          </p>
+          {/* Top Uninstall Reason */}
           <div
-            style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}
+            className="glass-panel"
+            style={{
+              padding: "var(--space-lg)",
+              position: "relative",
+              overflow: "hidden",
+              transition: "all 0.3s ease",
+              cursor: "pointer",
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.transform = "translateY(-4px)";
+              e.currentTarget.style.boxShadow =
+                "0 10px 15px -3px rgba(255, 255, 255, 0.1), 0 4px 6px -2px rgba(255, 255, 255, 0.05)";
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.transform = "translateY(0)";
+              e.currentTarget.style.boxShadow = "none";
+            }}
           >
             <div
               style={{
                 display: "flex",
                 justifyContent: "space-between",
-                alignItems: "center",
+                alignItems: "flex-start",
               }}
             >
-              <div
-                style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}
-              >
-                <ThumbsUp size={16} color="#d2d2d2" />
-                <span>Positive</span>
+              <div>
+                <p
+                  style={{
+                    fontSize: "0.875rem",
+                    color: "var(--color-text-muted)",
+                    marginBottom: "0.5rem",
+                  }}
+                >
+                  Top Uninstall Reason
+                </p>
+                <h2
+                  style={{
+                    fontSize: "1.5rem",
+                    fontWeight: 700,
+                    margin: "0.5rem 0",
+                  }}
+                >
+                  {topMetrics.topUninstallReason}
+                </h2>
+                <p
+                  style={{
+                    fontSize: "0.875rem",
+                    color: "var(--color-text-muted)",
+                  }}
+                >
+                  32% of uninstalls
+                </p>
               </div>
-              <span style={{ fontWeight: 700, fontSize: "1.25rem" }}>
-                {topMetrics.sentimentBreakdown.positive}%
-              </span>
+              <div
+                style={{
+                  background: "#1a1a1a",
+                  padding: "0.75rem",
+                  borderRadius: "var(--radius-md)",
+                  color: "#e5e5e5",
+                }}
+              >
+                <AlertTriangle size={24} />
+              </div>
             </div>
+          </div>
+
+          {/* Most Affected Version */}
+          <div
+            className="glass-panel"
+            style={{
+              padding: "var(--space-lg)",
+              position: "relative",
+              overflow: "hidden",
+              transition: "all 0.3s ease",
+              cursor: "pointer",
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.transform = "translateY(-4px)";
+              e.currentTarget.style.boxShadow =
+                "0 10px 15px -3px rgba(255, 255, 255, 0.1), 0 4px 6px -2px rgba(255, 255, 255, 0.05)";
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.transform = "translateY(0)";
+              e.currentTarget.style.boxShadow = "none";
+            }}
+          >
             <div
               style={{
                 display: "flex",
                 justifyContent: "space-between",
-                alignItems: "center",
+                alignItems: "flex-start",
               }}
             >
-              <div
-                style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}
-              >
-                <Minus size={16} color="#999999" />
-                <span>Neutral</span>
+              <div>
+                <p
+                  style={{
+                    fontSize: "0.875rem",
+                    color: "var(--color-text-muted)",
+                    marginBottom: "0.5rem",
+                  }}
+                >
+                  Most Affected Version
+                </p>
+                <h2
+                  style={{
+                    fontSize: "1.5rem",
+                    fontWeight: 700,
+                    margin: "0.5rem 0",
+                  }}
+                >
+                  {topMetrics.mostAffectedVersion}
+                </h2>
+                <p
+                  style={{
+                    fontSize: "0.875rem",
+                    color: "var(--color-text-muted)",
+                  }}
+                >
+                  8.7% crash rate
+                </p>
               </div>
-              <span style={{ fontWeight: 700, fontSize: "1.25rem" }}>
-                {topMetrics.sentimentBreakdown.neutral}%
-              </span>
-            </div>
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "center",
-              }}
-            >
               <div
-                style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}
+                style={{
+                  background: "#1a1a1a",
+                  padding: "0.75rem",
+                  borderRadius: "var(--radius-md)",
+                  color: "#bfbfbf",
+                }}
               >
-                <ThumbsDown size={16} color="#e5e5e5" />
-                <span>Negative</span>
+                <Bug size={24} />
               </div>
-              <span style={{ fontWeight: 700, fontSize: "1.25rem" }}>
-                {topMetrics.sentimentBreakdown.negative}%
-              </span>
-            </div>
-          </div>
-        </div>
-
-        {/* Top Uninstall Reason */}
-        <div
-          className="glass-panel"
-          style={{
-            padding: "var(--space-lg)",
-            position: "relative",
-            overflow: "hidden",
-            transition: "all 0.3s ease",
-            cursor: "pointer",
-          }}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.transform = "translateY(-4px)";
-            e.currentTarget.style.boxShadow =
-              "0 10px 15px -3px rgba(255, 255, 255, 0.1), 0 4px 6px -2px rgba(255, 255, 255, 0.05)";
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.transform = "translateY(0)";
-            e.currentTarget.style.boxShadow = "none";
-          }}
-        >
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "flex-start",
-            }}
-          >
-            <div>
-              <p
-                style={{
-                  fontSize: "0.875rem",
-                  color: "var(--color-text-muted)",
-                  marginBottom: "0.5rem",
-                }}
-              >
-                Top Uninstall Reason
-              </p>
-              <h2
-                style={{
-                  fontSize: "1.5rem",
-                  fontWeight: 700,
-                  margin: "0.5rem 0",
-                }}
-              >
-                {topMetrics.topUninstallReason}
-              </h2>
-              <p
-                style={{
-                  fontSize: "0.875rem",
-                  color: "var(--color-text-muted)",
-                }}
-              >
-                32% of uninstalls
-              </p>
-            </div>
-            <div
-              style={{
-                background: "#1a1a1a",
-                padding: "0.75rem",
-                borderRadius: "var(--radius-md)",
-                color: "#e5e5e5",
-              }}
-            >
-              <AlertTriangle size={24} />
-            </div>
-          </div>
-        </div>
-
-        {/* Most Affected Version */}
-        <div
-          className="glass-panel"
-          style={{
-            padding: "var(--space-lg)",
-            position: "relative",
-            overflow: "hidden",
-            transition: "all 0.3s ease",
-            cursor: "pointer",
-          }}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.transform = "translateY(-4px)";
-            e.currentTarget.style.boxShadow =
-              "0 10px 15px -3px rgba(255, 255, 255, 0.1), 0 4px 6px -2px rgba(255, 255, 255, 0.05)";
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.transform = "translateY(0)";
-            e.currentTarget.style.boxShadow = "none";
-          }}
-        >
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "flex-start",
-            }}
-          >
-            <div>
-              <p
-                style={{
-                  fontSize: "0.875rem",
-                  color: "var(--color-text-muted)",
-                  marginBottom: "0.5rem",
-                }}
-              >
-                Most Affected Version
-              </p>
-              <h2
-                style={{
-                  fontSize: "1.5rem",
-                  fontWeight: 700,
-                  margin: "0.5rem 0",
-                }}
-              >
-                {topMetrics.mostAffectedVersion}
-              </h2>
-              <p
-                style={{ fontSize: "0.875rem", color: "var(--color-text-muted)" }}
-              >
-                8.7% crash rate
-              </p>
-            </div>
-            <div
-              style={{
-                background: "#1a1a1a",
-                padding: "0.75rem",
-                borderRadius: "var(--radius-md)",
-                color: "#bfbfbf",
-              }}
-            >
-              <Bug size={24} />
             </div>
           </div>
         </div>
       </div>
-    </div>
 
       {/* ============================================ */}
       {/* 3. RATING & REVIEW TRENDS */}
@@ -1185,52 +1255,162 @@ export default function Dashboard() {
         </div>
       </div>
 
-      {/* Review Volume Over Time */}
+      {/* Review Volume & Response Analysis - Side by Side */}
       <div
-        className="glass-panel"
         style={{
-          padding: "var(--space-xl)",
+          display: "grid",
+          gridTemplateColumns: "1fr 1fr",
+          gap: "var(--space-lg)",
           marginBottom: "var(--space-xl)",
         }}
       >
-        <h3
-          style={{
-            fontSize: "1.25rem",
-            fontWeight: 600,
-            marginBottom: "var(--space-lg)",
-          }}
-        >
-          Review Volume Trend
-        </h3>
-        <ResponsiveContainer width="100%" height={300}>
-          <BarChart data={ratingOverTime}>
-            <defs>
-              <linearGradient id="reviewBarGrad" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor="#4f46e5" stopOpacity={1} />
-                <stop offset="100%" stopColor="#3730a3" stopOpacity={0.9} />
-              </linearGradient>
-            </defs>
-            <CartesianGrid strokeDasharray="3 3" stroke="#1a1a1a" />
-            <XAxis
-              dataKey="month"
-              stroke="#999999"
-              style={{ fontSize: "0.75rem" }}
-            />
-            <YAxis stroke="#999999" style={{ fontSize: "0.75rem" }} />
-            <Tooltip content={<CustomTooltip />} />
-            <Bar
-              dataKey="reviews"
-              fill="url(#reviewBarGrad)"
-              radius={[8, 8, 0, 0]}
-              name="Reviews"
-              animationDuration={1500}
-              animationEasing="ease-out"
-              style={{
-                filter: "drop-shadow(0 4px 8px rgba(79, 70, 229, 0.6))",
-              }}
-            />
-          </BarChart>
-        </ResponsiveContainer>
+        {/* Review Volume Over Time */}
+        <div className="glass-panel" style={{ padding: "var(--space-xl)" }}>
+          <h3
+            style={{
+              fontSize: "1.25rem",
+              fontWeight: 600,
+              marginBottom: "var(--space-lg)",
+            }}
+          >
+            Review Volume Trend
+          </h3>
+          <ResponsiveContainer width="100%" height={350}>
+            <BarChart data={ratingOverTime}>
+              <defs>
+                <linearGradient id="reviewBarGrad" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stopColor="#ffffff" stopOpacity={0.9} />
+                  <stop offset="100%" stopColor="#999999" stopOpacity={0.7} />
+                </linearGradient>
+              </defs>
+              <CartesianGrid strokeDasharray="3 3" stroke="#1a1a1a" />
+              <XAxis
+                dataKey="month"
+                stroke="#999999"
+                style={{ fontSize: "0.75rem" }}
+              />
+              <YAxis stroke="#999999" style={{ fontSize: "0.75rem" }} />
+              <Tooltip content={<CustomTooltip />} cursor={false} />
+              <Bar
+                dataKey="reviews"
+                fill="url(#reviewBarGrad)"
+                radius={[8, 8, 0, 0]}
+                name="Reviews"
+                animationDuration={1500}
+                animationEasing="ease-out"
+              />
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
+
+        {/* Developer Response Analysis */}
+        <div className="glass-panel" style={{ padding: "var(--space-xl)" }}>
+          <h3
+            style={{
+              fontSize: "1.25rem",
+              fontWeight: 600,
+              marginBottom: "var(--space-lg)",
+            }}
+          >
+            Developer Response Analysis
+          </h3>
+          <ResponsiveContainer width="100%" height={350}>
+            <AreaChart data={reviewResponseData}>
+              <defs>
+                <linearGradient
+                  id="responseRateAreaGrad"
+                  x1="0"
+                  y1="0"
+                  x2="0"
+                  y2="1"
+                >
+                  <stop offset="5%" stopColor="#ffffff" stopOpacity={0.6} />
+                  <stop offset="95%" stopColor="#999999" stopOpacity={0} />
+                </linearGradient>
+                <linearGradient
+                  id="responseTimeAreaGrad"
+                  x1="0"
+                  y1="0"
+                  x2="0"
+                  y2="1"
+                >
+                  <stop offset="5%" stopColor="#cccccc" stopOpacity={0.5} />
+                  <stop offset="95%" stopColor="#666666" stopOpacity={0} />
+                </linearGradient>
+              </defs>
+              <CartesianGrid strokeDasharray="3 3" stroke="#1a1a1a" />
+              <XAxis
+                dataKey="month"
+                stroke="#999999"
+                style={{ fontSize: "0.75rem" }}
+              />
+              <YAxis
+                yAxisId="left"
+                stroke="#999999"
+                style={{ fontSize: "0.75rem" }}
+                label={{
+                  value: "Response Rate %",
+                  angle: -90,
+                  position: "insideLeft",
+                  style: { fill: "#999999" },
+                }}
+              />
+              <YAxis
+                yAxisId="right"
+                orientation="right"
+                stroke="#cccccc"
+                style={{ fontSize: "0.75rem" }}
+                label={{
+                  value: "Avg Response Time (days)",
+                  angle: 90,
+                  position: "insideRight",
+                  style: { fill: "#cccccc" },
+                }}
+              />
+              <Tooltip content={<CustomTooltip />} cursor={false} />
+              <Legend />
+              <Area
+                yAxisId="left"
+                type="monotone"
+                dataKey="responseRate"
+                stroke="#ffffff"
+                strokeWidth={2}
+                fill="url(#responseRateAreaGrad)"
+                name="Response Rate %"
+                animationDuration={1500}
+                animationEasing="ease-out"
+              />
+              <Area
+                yAxisId="right"
+                type="monotone"
+                dataKey="avgResponseTime"
+                stroke="#cccccc"
+                strokeWidth={2}
+                fill="url(#responseTimeAreaGrad)"
+                name="Avg Response Time (days)"
+                animationDuration={2000}
+                animationEasing="ease-out"
+              />
+            </AreaChart>
+          </ResponsiveContainer>
+          <div
+            style={{
+              marginTop: "var(--space-md)",
+              padding: "var(--space-md)",
+              background: "#0a0a0a",
+              borderRadius: "var(--radius-sm)",
+              border: "1px solid #333333",
+              fontSize: "0.875rem",
+              color: "var(--color-text-muted)",
+            }}
+          >
+            <span style={{ color: "#ffffff", fontWeight: 600 }}>
+              💡 Insight:
+            </span>{" "}
+            Recent improvement in response time correlates with higher response
+            rates and better user sentiment.
+          </div>
+        </div>
       </div>
 
       {/* ============================================ */}
@@ -1393,16 +1573,16 @@ export default function Dashboard() {
             <AreaChart data={sentimentOverTime}>
               <defs>
                 <linearGradient id="positiveArea" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#d2d2d2" stopOpacity={0.8} />
-                  <stop offset="95%" stopColor="#d2d2d2" stopOpacity={0.1} />
+                  <stop offset="5%" stopColor="#d2d2d2" stopOpacity={0.3} />
+                  <stop offset="95%" stopColor="#d2d2d2" stopOpacity={0.0} />
                 </linearGradient>
                 <linearGradient id="neutralArea" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#999999" stopOpacity={0.8} />
-                  <stop offset="95%" stopColor="#999999" stopOpacity={0.1} />
+                  <stop offset="5%" stopColor="#999999" stopOpacity={0.5} />
+                  <stop offset="95%" stopColor="#999999" stopOpacity={0.0} />
                 </linearGradient>
                 <linearGradient id="negativeArea" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#e5e5e5" stopOpacity={0.8} />
-                  <stop offset="95%" stopColor="#e5e5e5" stopOpacity={0.1} />
+                  <stop offset="5%" stopColor="#e5e5e5" stopOpacity={0.5} />
+                  <stop offset="95%" stopColor="#e5e5e5" stopOpacity={0.0} />
                 </linearGradient>
               </defs>
               <CartesianGrid strokeDasharray="3 3" stroke="#1a1a1a" />
@@ -1589,8 +1769,8 @@ export default function Dashboard() {
             <BarChart data={bugCategories} layout="vertical">
               <defs>
                 <linearGradient id="bugBarGrad" x1="0" y1="0" x2="1" y2="0">
-                  <stop offset="0%" stopColor="#4f46e5" stopOpacity={1} />
-                  <stop offset="100%" stopColor="#3730a3" stopOpacity={0.9} />
+                  <stop offset="0%" stopColor="#999999" stopOpacity={0.6} />
+                  <stop offset="100%" stopColor="#ffffff" stopOpacity={0.8} />
                 </linearGradient>
               </defs>
               <CartesianGrid strokeDasharray="3 3" stroke="#1a1a1a" />
@@ -1606,7 +1786,7 @@ export default function Dashboard() {
                 style={{ fontSize: "0.75rem" }}
                 width={150}
               />
-              <Tooltip content={<CustomTooltip />} />
+              <Tooltip content={<CustomTooltip />} cursor={false} />
               <Bar
                 dataKey="frequency"
                 fill="url(#bugBarGrad)"
@@ -1614,9 +1794,7 @@ export default function Dashboard() {
                 name="Frequency %"
                 animationDuration={1500}
                 animationEasing="ease-out"
-                style={{
-                  filter: "drop-shadow(0 4px 8px rgba(79, 70, 229, 0.6))",
-                }}
+                style={{}}
               />
             </BarChart>
           </ResponsiveContainer>
@@ -1947,8 +2125,8 @@ export default function Dashboard() {
                     fontSize: "0.75rem",
                     fontWeight: 600,
                     background: "#1a1a1a",
-                    color: "#999999",
-                    border: "1px solid #333333",
+                    color: "#ffffff",
+                    border: "1px solid #ffffff",
                   }}
                 >
                   {versionComparison.before.version}
@@ -1961,22 +2139,7 @@ export default function Dashboard() {
                   gap: "var(--space-lg)",
                 }}
               >
-                <div
-                  style={{
-                    padding: "var(--space-md)",
-                    borderRadius: "var(--radius-md)",
-                    background: "#0a0a0a",
-                    transition: "all 0.3s ease",
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.background = "#eeeeee";
-                    e.currentTarget.style.transform = "translateY(-2px)";
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.background = "#f5f5f5";
-                    e.currentTarget.style.transform = "translateY(0)";
-                  }}
-                >
+                <div>
                   <div
                     style={{
                       fontSize: "0.875rem",
@@ -1990,7 +2153,7 @@ export default function Dashboard() {
                     style={{
                       fontSize: "2rem",
                       fontWeight: 700,
-                      color: "#2d2d2d",
+                      color: "#e5e5e5",
                     }}
                   >
                     {versionComparison.before.rating} ⭐
@@ -2183,7 +2346,7 @@ export default function Dashboard() {
         <div
           style={{
             marginBottom: "var(--space-xl)",
-            maxWidth: "50%",
+            maxWidth: "100%",
             margin: "0 auto var(--space-xl)",
           }}
         >
@@ -2192,8 +2355,8 @@ export default function Dashboard() {
             <BarChart data={featureRequests}>
               <defs>
                 <linearGradient id="featureBarGrad" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stopColor="#4f46e5" stopOpacity={1} />
-                  <stop offset="100%" stopColor="#3730a3" stopOpacity={0.9} />
+                  <stop offset="0%" stopColor="#ffffff" stopOpacity={0.9} />
+                  <stop offset="100%" stopColor="#999999" stopOpacity={0.7} />
                 </linearGradient>
               </defs>
               <CartesianGrid strokeDasharray="3 3" stroke="#1a1a1a" />
@@ -2214,7 +2377,7 @@ export default function Dashboard() {
                   position: "insideLeft",
                 }}
               />
-              <Tooltip content={<CustomTooltip />} />
+              <Tooltip content={<CustomTooltip />} cursor={false} />
               <Bar
                 dataKey="requests"
                 fill="url(#featureBarGrad)"
@@ -2222,9 +2385,7 @@ export default function Dashboard() {
                 name="User Requests %"
                 animationDuration={1500}
                 animationEasing="ease-out"
-                style={{
-                  filter: "drop-shadow(0 4px 8px rgba(79, 70, 229, 0.6))",
-                }}
+                style={{}}
               />
             </BarChart>
           </ResponsiveContainer>
@@ -2243,7 +2404,7 @@ export default function Dashboard() {
               <CardBody>
                 <div
                   style={{
-                    background: `#0a0a0a`,
+                    background: `#000000`,
                     border: `2px solid #333333`,
                     borderRadius: "var(--radius-md)",
                     padding: "var(--space-lg)",
@@ -2377,22 +2538,12 @@ export default function Dashboard() {
                         style={{
                           fontSize: "0.95rem",
                           fontWeight: 700,
-                          color:
-                            feature.impact === "High"
-                              ? "#2d2d2d"
-                              : feature.impact === "Medium"
-                              ? "#666666"
-                              : "#999999",
+                          color: "white",
                           display: "flex",
                           alignItems: "center",
                           gap: "0.25rem",
                         }}
                       >
-                        {feature.impact === "High"
-                          ? "🔥"
-                          : feature.impact === "Medium"
-                          ? "⚡"
-                          : "💡"}
                         {feature.impact}
                       </div>
                     </div>
@@ -2412,22 +2563,12 @@ export default function Dashboard() {
                         style={{
                           fontSize: "0.95rem",
                           fontWeight: 700,
-                          color:
-                            feature.effort === "Low"
-                              ? "#d2d2d2"
-                              : feature.effort === "Medium"
-                              ? "#999999"
-                              : "#e5e5e5",
+                          color: "white",
                           display: "flex",
                           alignItems: "center",
                           gap: "0.25rem",
                         }}
                       >
-                        {feature.effort === "Low"
-                          ? "✅"
-                          : feature.effort === "Medium"
-                          ? "⏱️"
-                          : "🔧"}
                         {feature.effort}
                       </div>
                     </div>
