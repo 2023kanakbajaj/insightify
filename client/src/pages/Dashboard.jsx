@@ -1809,153 +1809,151 @@ export default function Dashboard() {
           }}
         >
           {bugCategories.map((bug) => (
-            <CardContainer className="w-full" key={bug.name}>
-              <CardBody>
+            <div key={bug.name} style={{ margin: 0, padding: 0 }}>
+              <div
+                style={{
+                  background: "#0a0a0a",
+                  border: `2px solid ${getSeverityColor(bug.severity)}`,
+                  borderRadius: "var(--radius-md)",
+                  padding: "var(--space-lg)",
+                  transition: "all 0.2s",
+                  cursor: "pointer",
+                  position: "relative",
+                  overflow: "hidden",
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.transform = "translateY(-4px)";
+                  e.currentTarget.style.boxShadow = `0 8px 24px rgba(79, 70, 229, 0.7)`;
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.transform = "translateY(0)";
+                  e.currentTarget.style.boxShadow = "none";
+                }}
+              >
+                {/* Severity Indicator Bar */}
                 <div
                   style={{
-                    background: "#0a0a0a",
-                    border: `2px solid ${getSeverityColor(bug.severity)}`,
-                    borderRadius: "var(--radius-md)",
-                    padding: "var(--space-lg)",
-                    transition: "all 0.2s",
-                    cursor: "pointer",
-                    position: "relative",
-                    overflow: "hidden",
+                    position: "absolute",
+                    top: 0,
+                    left: 0,
+                    width: "4px",
+                    height: "100%",
+                    background: getSeverityColor(bug.severity),
                   }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.transform = "translateY(-4px)";
-                    e.currentTarget.style.boxShadow = `0 8px 24px rgba(79, 70, 229, 0.7)`;
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.transform = "translateY(0)";
-                    e.currentTarget.style.boxShadow = "none";
+                />
+
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "flex-start",
+                    marginBottom: "var(--space-md)",
                   }}
                 >
-                  {/* Severity Indicator Bar */}
-                  <div
-                    style={{
-                      position: "absolute",
-                      top: 0,
-                      left: 0,
-                      width: "4px",
-                      height: "100%",
-                      background: getSeverityColor(bug.severity),
-                    }}
-                  />
-
-                  <div
-                    style={{
-                      display: "flex",
-                      justifyContent: "space-between",
-                      alignItems: "flex-start",
-                      marginBottom: "var(--space-md)",
-                    }}
-                  >
-                    <div
-                      style={{
-                        display: "flex",
-                        alignItems: "center",
-                        gap: "0.5rem",
-                      }}
-                    >
-                      <div
-                        style={{
-                          background: `${getSeverityColor(bug.severity)}20`,
-                          padding: "0.5rem",
-                          borderRadius: "var(--radius-sm)",
-                        }}
-                      >
-                        <Bug size={18} color={getSeverityColor(bug.severity)} />
-                      </div>
-                      <h4
-                        style={{
-                          fontSize: "1rem",
-                          fontWeight: 600,
-                          margin: 0,
-                          color: "#ffffff",
-                        }}
-                      >
-                        {bug.name}
-                      </h4>
-                    </div>
-                    <span
-                      style={{
-                        padding: "0.25rem 0.75rem",
-                        borderRadius: "999px",
-                        fontSize: "0.75rem",
-                        fontWeight: 600,
-                        background: `${getSeverityColor(bug.severity)}20`,
-                        color: getSeverityColor(bug.severity),
-                      }}
-                    >
-                      {bug.severity}
-                    </span>
-                  </div>
-                  <div
-                    style={{
-                      fontSize: "2rem",
-                      fontWeight: 700,
-                      marginBottom: "0.5rem",
-                      color: "#ffffff",
-                    }}
-                  >
-                    {bug.frequency}%
-                  </div>
-                  <p
-                    style={{
-                      fontSize: "0.875rem",
-                      color: "#d1d5db",
-                      lineHeight: 1.5,
-                      marginBottom: "var(--space-md)",
-                      fontStyle: "italic",
-                      background: "#1a1a1a",
-                      padding: "0.75rem",
-                      borderRadius: "var(--radius-sm)",
-                      borderLeft: `3px solid ${getSeverityColor(bug.severity)}`,
-                    }}
-                  >
-                    "{bug.sample}"
-                  </p>
                   <div
                     style={{
                       display: "flex",
                       alignItems: "center",
-                      justifyContent: "space-between",
                       gap: "0.5rem",
-                      color: "var(--color-text-muted)",
-                      fontSize: "0.75rem",
-                      paddingTop: "var(--space-sm)",
-                      borderTop: "1px solid rgba(255, 255, 255, 0.05)",
                     }}
                   >
                     <div
                       style={{
-                        display: "flex",
-                        alignItems: "center",
-                        gap: "0.5rem",
+                        background: `${getSeverityColor(bug.severity)}20`,
+                        padding: "0.5rem",
+                        borderRadius: "var(--radius-sm)",
                       }}
                     >
-                      <Users size={14} />
-                      <span>{bug.affectedUsers.toLocaleString()} users</span>
+                      <Bug size={18} color={getSeverityColor(bug.severity)} />
                     </div>
-                    <span
+                    <h4
                       style={{
-                        padding: "0.25rem 0.5rem",
-                        background: "#1a1a1a",
-                        borderRadius: "4px",
+                        fontSize: "1rem",
                         fontWeight: 600,
+                        margin: 0,
+                        color: "#ffffff",
                       }}
                     >
-                      {(
-                        (bug.affectedUsers / topMetrics.totalReviewsAnalyzed) *
-                        100
-                      ).toFixed(1)}
-                      % of total
-                    </span>
+                      {bug.name}
+                    </h4>
                   </div>
+                  <span
+                    style={{
+                      padding: "0.25rem 0.75rem",
+                      borderRadius: "999px",
+                      fontSize: "0.75rem",
+                      fontWeight: 600,
+                      background: `${getSeverityColor(bug.severity)}20`,
+                      color: getSeverityColor(bug.severity),
+                    }}
+                  >
+                    {bug.severity}
+                  </span>
                 </div>
-              </CardBody>
-            </CardContainer>
+                <div
+                  style={{
+                    fontSize: "2rem",
+                    fontWeight: 700,
+                    marginBottom: "0.5rem",
+                    color: "#ffffff",
+                  }}
+                >
+                  {bug.frequency}%
+                </div>
+                <p
+                  style={{
+                    fontSize: "0.875rem",
+                    color: "#d1d5db",
+                    lineHeight: 1.5,
+                    marginBottom: "var(--space-md)",
+                    fontStyle: "italic",
+                    background: "#1a1a1a",
+                    padding: "0.75rem",
+                    borderRadius: "var(--radius-sm)",
+                    borderLeft: `3px solid ${getSeverityColor(bug.severity)}`,
+                  }}
+                >
+                  "{bug.sample}"
+                </p>
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                    gap: "0.5rem",
+                    color: "var(--color-text-muted)",
+                    fontSize: "0.75rem",
+                    paddingTop: "var(--space-sm)",
+                    borderTop: "1px solid rgba(255, 255, 255, 0.05)",
+                  }}
+                >
+                  <div
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "0.5rem",
+                    }}
+                  >
+                    <Users size={14} />
+                    <span>{bug.affectedUsers.toLocaleString()} users</span>
+                  </div>
+                  <span
+                    style={{
+                      padding: "0.25rem 0.5rem",
+                      background: "#1a1a1a",
+                      borderRadius: "4px",
+                      fontWeight: 600,
+                    }}
+                  >
+                    {(
+                      (bug.affectedUsers / topMetrics.totalReviewsAnalyzed) *
+                      100
+                    ).toFixed(1)}
+                    % of total
+                  </span>
+                </div>
+              </div>
+            </div>
           ))}
         </div>
       </div>
@@ -2400,224 +2398,219 @@ export default function Dashboard() {
           }}
         >
           {featureRequests.map((feature) => (
-            <CardContainer className="w-full" key={feature.name}>
-              <CardBody>
+            <div key={feature.name} style={{ margin: 0, padding: 0 }}>
+              <div
+                style={{
+                  background: `#000000`,
+                  border: `2px solid #333333`,
+                  borderRadius: "var(--radius-md)",
+                  padding: "var(--space-lg)",
+                  transition: "all 0.3s",
+                  cursor: "pointer",
+                  position: "relative",
+                  overflow: "hidden",
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.transform =
+                    "translateY(-4px) scale(1.02)";
+                  e.currentTarget.style.boxShadow = `0 12px 32px rgba(79, 70, 229, 0.7)`;
+                  e.currentTarget.style.borderColor = getPriorityColor(
+                    feature.priority
+                  );
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.transform = "translateY(0) scale(1)";
+                  e.currentTarget.style.boxShadow = "none";
+                  e.currentTarget.style.borderColor = "#333333";
+                }}
+              >
+                {/* Priority Badge Ribbon */}
                 <div
                   style={{
-                    background: `#000000`,
-                    border: `2px solid #333333`,
-                    borderRadius: "var(--radius-md)",
-                    padding: "var(--space-lg)",
-                    transition: "all 0.3s",
-                    cursor: "pointer",
-                    position: "relative",
-                    overflow: "hidden",
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.transform =
-                      "translateY(-4px) scale(1.02)";
-                    e.currentTarget.style.boxShadow = `0 12px 32px rgba(79, 70, 229, 0.7)`;
-                    e.currentTarget.style.borderColor = getPriorityColor(
-                      feature.priority
-                    );
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.transform = "translateY(0) scale(1)";
-                    e.currentTarget.style.boxShadow = "none";
-                    e.currentTarget.style.borderColor = "#333333";
+                    position: "absolute",
+                    top: 12,
+                    right: -30,
+                    background: getPriorityColor(feature.priority),
+                    color: "white",
+                    padding: "4px 40px",
+                    transform: "rotate(45deg)",
+                    fontSize: "0.7rem",
+                    fontWeight: 700,
+                    textAlign: "center",
+                    boxShadow: "0 2px 8px rgba(0, 0, 0, 0.5)",
                   }}
                 >
-                  {/* Priority Badge Ribbon */}
-                  <div
-                    style={{
-                      position: "absolute",
-                      top: 12,
-                      right: -30,
-                      background: getPriorityColor(feature.priority),
-                      color: "white",
-                      padding: "4px 40px",
-                      transform: "rotate(45deg)",
-                      fontSize: "0.7rem",
-                      fontWeight: 700,
-                      textAlign: "center",
-                      boxShadow: "0 2px 8px rgba(0, 0, 0, 0.5)",
-                    }}
-                  >
-                    {feature.priority}
-                  </div>
+                  {feature.priority}
+                </div>
 
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                    marginBottom: "var(--space-md)",
+                  }}
+                >
                   <div
                     style={{
                       display: "flex",
-                      justifyContent: "space-between",
                       alignItems: "center",
-                      marginBottom: "var(--space-md)",
-                    }}
-                  >
-                    <div
-                      style={{
-                        display: "flex",
-                        alignItems: "center",
-                        gap: "0.5rem",
-                      }}
-                    >
-                      <Zap
-                        size={20}
-                        color={getPriorityColor(feature.priority)}
-                      />
-                      <h4
-                        style={{
-                          fontSize: "1.2rem",
-                          fontWeight: 800,
-                          margin: 0,
-                          color: "#ffffff",
-                        }}
-                      >
-                        {feature.name}
-                      </h4>
-                    </div>
-                  </div>
-
-                  <div
-                    style={{
-                      display: "flex",
-                      alignItems: "baseline",
                       gap: "0.5rem",
-                      marginBottom: "var(--space-md)",
                     }}
                   >
-                    <div
+                    <Zap size={20} color={getPriorityColor(feature.priority)} />
+                    <h4
                       style={{
-                        fontSize: "3rem",
+                        fontSize: "1.2rem",
                         fontWeight: 800,
-                        color: "#ffffff",
-                        textShadow: "0 2px 12px rgba(255, 255, 255, 0.3)",
-                        letterSpacing: "1px",
-                      }}
-                    >
-                      {feature.requests}%
-                    </div>
-                    <p
-                      style={{
-                        fontSize: "0.9rem",
-                        color: "#d1d5db",
                         margin: 0,
-                        fontWeight: 500,
+                        color: "#ffffff",
                       }}
                     >
-                      of users requesting
-                    </p>
-                  </div>
-
-                  {/* Impact & Effort Grid */}
-                  <div
-                    style={{
-                      display: "grid",
-                      gridTemplateColumns: "1fr 1fr",
-                      gap: "var(--space-md)",
-                      marginTop: "var(--space-lg)",
-                      padding: "var(--space-md)",
-                      background: "#1a1a1a",
-                      borderRadius: "var(--radius-sm)",
-                      border: "1px solid #333333",
-                    }}
-                  >
-                    <div>
-                      <div
-                        style={{
-                          fontSize: "0.7rem",
-                          color: "var(--color-text-muted)",
-                          textTransform: "uppercase",
-                          letterSpacing: "0.5px",
-                          marginBottom: "0.25rem",
-                        }}
-                      >
-                        Impact
-                      </div>
-                      <div
-                        style={{
-                          fontSize: "0.95rem",
-                          fontWeight: 700,
-                          color: "white",
-                          display: "flex",
-                          alignItems: "center",
-                          gap: "0.25rem",
-                        }}
-                      >
-                        {feature.impact}
-                      </div>
-                    </div>
-                    <div>
-                      <div
-                        style={{
-                          fontSize: "0.7rem",
-                          color: "var(--color-text-muted)",
-                          textTransform: "uppercase",
-                          letterSpacing: "0.5px",
-                          marginBottom: "0.25rem",
-                        }}
-                      >
-                        Effort
-                      </div>
-                      <div
-                        style={{
-                          fontSize: "0.95rem",
-                          fontWeight: 700,
-                          color: "white",
-                          display: "flex",
-                          alignItems: "center",
-                          gap: "0.25rem",
-                        }}
-                      >
-                        {feature.effort}
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* ROI Indicator */}
-                  <div
-                    style={{
-                      marginTop: "var(--space-md)",
-                      padding: "0.5rem",
-                      background:
-                        feature.impact === "High" && feature.effort === "Low"
-                          ? "#1a1a1a"
-                          : feature.impact === "High" &&
-                            feature.effort === "Medium"
-                          ? "#0f0f0f"
-                          : "#1a1a1a",
-                      borderRadius: "var(--radius-sm)",
-                      border: `1px solid ${
-                        feature.impact === "High" && feature.effort === "Low"
-                          ? "#d2d2d2"
-                          : feature.impact === "High" &&
-                            feature.effort === "Medium"
-                          ? "#bfbfbf"
-                          : "#333333"
-                      }`,
-                      textAlign: "center",
-                      fontSize: "0.75rem",
-                      fontWeight: 600,
-                      color:
-                        feature.impact === "High" && feature.effort === "Low"
-                          ? "#d2d2d2"
-                          : feature.impact === "High" &&
-                            feature.effort === "Medium"
-                          ? "#bfbfbf"
-                          : "var(--color-text-muted)",
-                    }}
-                  >
-                    {feature.impact === "High" && feature.effort === "Low"
-                      ? "🎯 Quick Win - High ROI"
-                      : feature.impact === "High" && feature.effort === "Medium"
-                      ? "💎 Strategic Investment"
-                      : feature.impact === "High" && feature.effort === "High"
-                      ? "🏗️ Major Project"
-                      : "📌 Consider for Backlog"}
+                      {feature.name}
+                    </h4>
                   </div>
                 </div>
-              </CardBody>
-            </CardContainer>
+
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "baseline",
+                    gap: "0.5rem",
+                    marginBottom: "var(--space-md)",
+                  }}
+                >
+                  <div
+                    style={{
+                      fontSize: "3rem",
+                      fontWeight: 800,
+                      color: "#ffffff",
+                      textShadow: "0 2px 12px rgba(255, 255, 255, 0.3)",
+                      letterSpacing: "1px",
+                    }}
+                  >
+                    {feature.requests}%
+                  </div>
+                  <p
+                    style={{
+                      fontSize: "0.9rem",
+                      color: "#d1d5db",
+                      margin: 0,
+                      fontWeight: 500,
+                    }}
+                  >
+                    of users requesting
+                  </p>
+                </div>
+
+                {/* Impact & Effort Grid */}
+                <div
+                  style={{
+                    display: "grid",
+                    gridTemplateColumns: "1fr 1fr",
+                    gap: "var(--space-md)",
+                    marginTop: "var(--space-lg)",
+                    padding: "var(--space-md)",
+                    background: "#1a1a1a",
+                    borderRadius: "var(--radius-sm)",
+                    border: "1px solid #333333",
+                  }}
+                >
+                  <div>
+                    <div
+                      style={{
+                        fontSize: "0.7rem",
+                        color: "var(--color-text-muted)",
+                        textTransform: "uppercase",
+                        letterSpacing: "0.5px",
+                        marginBottom: "0.25rem",
+                      }}
+                    >
+                      Impact
+                    </div>
+                    <div
+                      style={{
+                        fontSize: "0.95rem",
+                        fontWeight: 700,
+                        color: "white",
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "0.25rem",
+                      }}
+                    >
+                      {feature.impact}
+                    </div>
+                  </div>
+                  <div>
+                    <div
+                      style={{
+                        fontSize: "0.7rem",
+                        color: "var(--color-text-muted)",
+                        textTransform: "uppercase",
+                        letterSpacing: "0.5px",
+                        marginBottom: "0.25rem",
+                      }}
+                    >
+                      Effort
+                    </div>
+                    <div
+                      style={{
+                        fontSize: "0.95rem",
+                        fontWeight: 700,
+                        color: "white",
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "0.25rem",
+                      }}
+                    >
+                      {feature.effort}
+                    </div>
+                  </div>
+                </div>
+
+                {/* ROI Indicator */}
+                <div
+                  style={{
+                    marginTop: "var(--space-md)",
+                    padding: "0.5rem",
+                    background:
+                      feature.impact === "High" && feature.effort === "Low"
+                        ? "#1a1a1a"
+                        : feature.impact === "High" &&
+                          feature.effort === "Medium"
+                        ? "#0f0f0f"
+                        : "#1a1a1a",
+                    borderRadius: "var(--radius-sm)",
+                    border: `1px solid ${
+                      feature.impact === "High" && feature.effort === "Low"
+                        ? "#d2d2d2"
+                        : feature.impact === "High" &&
+                          feature.effort === "Medium"
+                        ? "#bfbfbf"
+                        : "#333333"
+                    }`,
+                    textAlign: "center",
+                    fontSize: "0.75rem",
+                    fontWeight: 600,
+                    color:
+                      feature.impact === "High" && feature.effort === "Low"
+                        ? "#d2d2d2"
+                        : feature.impact === "High" &&
+                          feature.effort === "Medium"
+                        ? "#bfbfbf"
+                        : "var(--color-text-muted)",
+                  }}
+                >
+                  {feature.impact === "High" && feature.effort === "Low"
+                    ? "🎯 Quick Win - High ROI"
+                    : feature.impact === "High" && feature.effort === "Medium"
+                    ? "💎 Strategic Investment"
+                    : feature.impact === "High" && feature.effort === "High"
+                    ? "🏗️ Major Project"
+                    : "📌 Consider for Backlog"}
+                </div>
+              </div>
+            </div>
           ))}
         </div>
       </div>
