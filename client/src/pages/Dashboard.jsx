@@ -1,5 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useSearchParams, useNavigate } from "react-router-dom";
 import { CardContainer, CardBody, CardItem } from "../components/ui/3d-card";
+import { authenticatedFetch } from "../lib/authHelper";
 
 import {
   TrendingUp,
@@ -19,6 +21,7 @@ import {
   Clock,
   Shield,
   Target,
+  Loader2
 } from "lucide-react";
 import {
   PieChart,
@@ -40,10 +43,10 @@ import {
 } from "recharts";
 
 // ============================================
-// MOCK DATA
+// DEFAULT MOCK DATA (Fallback)
 // ============================================
 
-const mockAppData = {
+const defaultAppData = {
   icon: "https://cdn-icons-png.flaticon.com/512/732/732242.png",
   name: "TaskMaster Pro",
   developer: "ProductivityHub Inc.",
@@ -55,7 +58,7 @@ const mockAppData = {
   appVersion: "v3.2.1",
 };
 
-const topMetrics = {
+const defaultTopMetrics = {
   totalReviewsAnalyzed: 87420,
   averageRating: 4.2,
   sentimentBreakdown: { positive: 62, neutral: 23, negative: 15 },
@@ -233,7 +236,7 @@ const versionComparison = {
   after: { version: "v3.2.0", rating: 4.0, sentiment: 58, crashes: 8.7 },
 };
 
-const recentReviews = [
+const defaultRecentReviews = [
   {
     text: "Love the new features but the app crashes too often now",
     rating: 3,
@@ -430,7 +433,107 @@ const getTagColor = (tag) => {
 // ============================================
 
 export default function Dashboard() {
+  const [searchParams] = useSearchParams();
+  const appId = searchParams.get('appId');
+
+  const [loading, setLoading] = useState(false);
   const [selectedFilter, setSelectedFilter] = useState("all");
+
+  const [mockAppData, setAppData] = useState(defaultAppData);
+  const navigate = useNavigate();
+  const [topMetrics, setTopMetrics] = useState(defaultTopMetrics);
+  const [recentReviews, setRecentReviews] = useState(defaultRecentReviews);
+
+  useEffect(() => {
+    if (!appId) return;
+
+    let isMounted = true;
+    const POLLING_INTERVAL = 3000;
+
+    const calculateSentiment = (reviews) => {
+      let positive = 0, neutral = 0, negative = 0;
+      reviews.forEach(r => {
+        if (r.score >= 4) positive++;
+        else if (r.score === 3) neutral++;
+        else negative++;
+      });
+      const total = reviews.length || 1;
+      return {
+        positive: Math.round((positive / total) * 100),
+        neutral: Math.round((neutral / total) * 100),
+        negative: Math.round((negative / total) * 100)
+      };
+    };
+
+    const fetchAppData = async () => {
+      setLoading(true);
+      try {
+        const res = await authenticatedFetch(`http://localhost:5001/api/results/${appId}`);
+        if (res.status === 401) { navigate("/login"); return; }
+        if (res.status === 404) {
+          setTimeout(() => {
+            if (isMounted) fetchAppData();
+          }, POLLING_INTERVAL);
+          return;
+        }
+        if (!res.ok) throw new Error("Failed to fetch");
+
+        const data = await res.json();
+        const { metadata, reviews } = data;
+
+        if (metadata && reviews) {
+          setAppData({
+            icon: metadata.icon,
+            name: metadata.title,
+            developer: metadata.developer,
+            category: metadata.genre,
+            installs: metadata.installs,
+            averageRating: metadata.score,
+            totalReviews: metadata.ratings,
+            lastUpdated: new Date(metadata.updated).toLocaleDateString(),
+            appVersion: metadata.version || "unknown",
+          });
+
+          const rList = reviews.list || reviews;
+          const sentiments = calculateSentiment(rList);
+
+          setTopMetrics({
+            totalReviewsAnalyzed: rList.length,
+            averageRating: metadata.score.toFixed(1),
+            sentimentBreakdown: sentiments,
+            healthScore: Math.round(metadata.score * 20),
+            topUninstallReason: "Too many ads",
+            mostAffectedVersion: metadata.version || "unknown",
+          });
+
+          setRecentReviews(rList.slice(0, 5).map(r => ({
+            text: r.text,
+            rating: r.score,
+            version: r.version,
+            date: r.date,
+            tag: r.score >= 4 ? "Praise" : "Bug"
+          })));
+        }
+        setLoading(false);
+      } catch (error) {
+        console.error("Fetch error", error);
+        setLoading(false);
+      }
+    };
+
+    fetchAppData();
+    return () => { isMounted = false; };
+  }, [appId]);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-black flex flex-col items-center justify-center text-white">
+        <Loader2 className="w-12 h-12 text-indigo-500 animate-spin mb-4" />
+        <h2 className="text-xl font-semibold">Analyzing App Data...</h2>
+        <p className="text-gray-400">This may take a few seconds.</p>
+      </div>
+    );
+  }
 
   // Add keyframe animations
   const styleSheet = document.createElement("style");
@@ -852,8 +955,8 @@ export default function Dashboard() {
                         topMetrics.healthScore > 70
                           ? "#ffffff"
                           : topMetrics.healthScore > 50
-                          ? "#bfbfbf"
-                          : "#999999",
+                            ? "#bfbfbf"
+                            : "#999999",
                       borderRadius: "999px",
                       transition: "width 0.3s",
                     }}
@@ -1172,8 +1275,8 @@ export default function Dashboard() {
                         item.stars >= 4
                           ? "#ffffff"
                           : item.stars === 3
-                          ? "#bfbfbf"
-                          : "#999999",
+                            ? "#bfbfbf"
+                            : "#999999",
                       borderRadius: "var(--radius-sm)",
                       transition: "width 0.3s",
                       display: "flex",
@@ -2038,24 +2141,24 @@ export default function Dashboard() {
                           index === 0
                             ? "linear-gradient(90deg, #ffffff, #e5e5e5)"
                             : index === 1
-                            ? "linear-gradient(90deg, #e5e5e5, #cccccc)"
-                            : index === 2
-                            ? "linear-gradient(90deg, #bfbfbf, #b2b2b2)"
-                            : index === 3
-                            ? "linear-gradient(90deg, #999999, #a6a6a6)"
-                            : "linear-gradient(90deg, #7f7f7f, #8c8c8c)",
+                              ? "linear-gradient(90deg, #e5e5e5, #cccccc)"
+                              : index === 2
+                                ? "linear-gradient(90deg, #bfbfbf, #b2b2b2)"
+                                : index === 3
+                                  ? "linear-gradient(90deg, #999999, #a6a6a6)"
+                                  : "linear-gradient(90deg, #7f7f7f, #8c8c8c)",
                         borderRadius: "999px",
                         transition: "width 1.5s cubic-bezier(0.4, 0, 0.2, 1)",
                         boxShadow:
                           index === 0
                             ? "0 0 10px rgba(255, 255, 255, 0.15)"
                             : index === 1
-                            ? "0 0 10px rgba(255, 255, 255, 0.12)"
-                            : index === 2
-                            ? "0 0 10px rgba(255, 255, 255, 0.1)"
-                            : index === 3
-                            ? "0 0 10px rgba(255, 255, 255, 0.08)"
-                            : "0 0 10px rgba(255, 255, 255, 0.06)",
+                              ? "0 0 10px rgba(255, 255, 255, 0.12)"
+                              : index === 2
+                                ? "0 0 10px rgba(255, 255, 255, 0.1)"
+                                : index === 3
+                                  ? "0 0 10px rgba(255, 255, 255, 0.08)"
+                                  : "0 0 10px rgba(255, 255, 255, 0.06)",
                       }}
                     />
                   </div>
@@ -2578,17 +2681,16 @@ export default function Dashboard() {
                         ? "#1a1a1a"
                         : feature.impact === "High" &&
                           feature.effort === "Medium"
-                        ? "#0f0f0f"
-                        : "#1a1a1a",
+                          ? "#0f0f0f"
+                          : "#1a1a1a",
                     borderRadius: "var(--radius-sm)",
-                    border: `1px solid ${
-                      feature.impact === "High" && feature.effort === "Low"
-                        ? "#d2d2d2"
-                        : feature.impact === "High" &&
-                          feature.effort === "Medium"
+                    border: `1px solid ${feature.impact === "High" && feature.effort === "Low"
+                      ? "#d2d2d2"
+                      : feature.impact === "High" &&
+                        feature.effort === "Medium"
                         ? "#bfbfbf"
                         : "#333333"
-                    }`,
+                      }`,
                     textAlign: "center",
                     fontSize: "0.75rem",
                     fontWeight: 600,
@@ -2597,17 +2699,17 @@ export default function Dashboard() {
                         ? "#d2d2d2"
                         : feature.impact === "High" &&
                           feature.effort === "Medium"
-                        ? "#bfbfbf"
-                        : "var(--color-text-muted)",
+                          ? "#bfbfbf"
+                          : "var(--color-text-muted)",
                   }}
                 >
                   {feature.impact === "High" && feature.effort === "Low"
                     ? "🎯 Quick Win - High ROI"
                     : feature.impact === "High" && feature.effort === "Medium"
-                    ? "💎 Strategic Investment"
-                    : feature.impact === "High" && feature.effort === "High"
-                    ? "🏗️ Major Project"
-                    : "📌 Consider for Backlog"}
+                      ? "💎 Strategic Investment"
+                      : feature.impact === "High" && feature.effort === "High"
+                        ? "🏗️ Major Project"
+                        : "📌 Consider for Backlog"}
                 </div>
               </div>
             </div>
@@ -2877,15 +2979,14 @@ export default function Dashboard() {
               key={rec.title}
               style={{
                 background: "#0f0f0f",
-                border: `2px solid ${
-                  rec.priority === "Critical"
-                    ? "#e5e5e5"
-                    : rec.priority === "High"
+                border: `2px solid ${rec.priority === "Critical"
+                  ? "#e5e5e5"
+                  : rec.priority === "High"
                     ? "#bfbfbf"
                     : rec.priority === "Medium"
-                    ? "#999999"
-                    : "#333333"
-                }`,
+                      ? "#999999"
+                      : "#333333"
+                  }`,
                 borderRadius: "var(--radius-lg)",
                 padding: "var(--space-lg)",
                 transition: "all 0.3s",
@@ -2900,23 +3001,22 @@ export default function Dashboard() {
                   rec.priority === "Critical"
                     ? "#e5e5e5"
                     : rec.priority === "High"
-                    ? "#bfbfbf"
-                    : rec.priority === "Medium"
-                    ? "#999999"
-                    : "#666666";
+                      ? "#bfbfbf"
+                      : rec.priority === "Medium"
+                        ? "#999999"
+                        : "#666666";
               }}
               onMouseLeave={(e) => {
                 e.currentTarget.style.transform = "translateX(0)";
                 e.currentTarget.style.boxShadow = "none";
-                e.currentTarget.style.borderColor = `${
-                  rec.priority === "Critical"
-                    ? "#e5e5e5"
-                    : rec.priority === "High"
+                e.currentTarget.style.borderColor = `${rec.priority === "Critical"
+                  ? "#e5e5e5"
+                  : rec.priority === "High"
                     ? "#bfbfbf"
                     : rec.priority === "Medium"
-                    ? "#999999"
-                    : "#333333"
-                }`;
+                      ? "#999999"
+                      : "#333333"
+                  }`;
               }}
             >
               {/* Priority Indicator */}
@@ -2931,10 +3031,10 @@ export default function Dashboard() {
                     rec.priority === "Critical"
                       ? "#e5e5e5"
                       : rec.priority === "High"
-                      ? "#bfbfbf"
-                      : rec.priority === "Medium"
-                      ? "#999999"
-                      : "#666666",
+                        ? "#bfbfbf"
+                        : rec.priority === "Medium"
+                          ? "#999999"
+                          : "#666666",
                 }}
               />
 
@@ -3006,27 +3106,26 @@ export default function Dashboard() {
                           rec.priority === "Critical"
                             ? "#f5f5f5"
                             : rec.priority === "High"
-                            ? "#fafafa"
-                            : rec.priority === "Medium"
-                            ? "#f5f5f5"
-                            : "#fafafa",
+                              ? "#fafafa"
+                              : rec.priority === "Medium"
+                                ? "#f5f5f5"
+                                : "#fafafa",
                         color:
                           rec.priority === "Critical"
                             ? "#e5e5e5"
                             : rec.priority === "High"
+                              ? "#bfbfbf"
+                              : rec.priority === "Medium"
+                                ? "#999999"
+                                : "#666666",
+                        border: `1px solid ${rec.priority === "Critical"
+                          ? "#e5e5e5"
+                          : rec.priority === "High"
                             ? "#bfbfbf"
                             : rec.priority === "Medium"
-                            ? "#999999"
-                            : "#666666",
-                        border: `1px solid ${
-                          rec.priority === "Critical"
-                            ? "#e5e5e5"
-                            : rec.priority === "High"
-                            ? "#bfbfbf"
-                            : rec.priority === "Medium"
-                            ? "#999999"
-                            : "#666666"
-                        }`,
+                              ? "#999999"
+                              : "#666666"
+                          }`,
                       }}
                     >
                       {rec.priority}

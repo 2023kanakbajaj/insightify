@@ -9,6 +9,8 @@ import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
 import VoiceAgent from "./pages/VoiceAgent";
 import Profile from "./pages/Profile";
+import Chatbot from "./pages/Chatbot";
+import AnalyzeApp from "./pages/AnalyzeApp";
 
 function App() {
   return (
@@ -23,6 +25,13 @@ function App() {
           <Route path="/login" element={<Login />} />
 
           {/* Authenticated Routes with Layout */}
+
+          <Route path="/analyze" element={
+            <Layout>
+              <AnalyzeApp />
+            </Layout>
+          } />
+
           <Route path="/dashboard" element={
             <Layout>
               <Dashboard />
@@ -38,6 +47,14 @@ function App() {
           <Route path="/profile" element={
             <Layout>
               <Profile />
+            </Layout>
+          } />
+
+
+
+          <Route path="/chat" element={
+            <Layout>
+              <Chatbot />
             </Layout>
           } />
 
