@@ -9,6 +9,7 @@ import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
 import VoiceAgent from "./pages/VoiceAgent";
 import Profile from "./pages/Profile";
+import BillingPage from "./pages/Biling";
 
 function App() {
   return (
@@ -38,6 +39,12 @@ function App() {
           <Route path="/profile" element={
             <Layout>
               <Profile />
+            </Layout>
+          } />
+
+          <Route path="/billing" element={
+            <Layout>
+              <BillingPage />
             </Layout>
           } />
 
