@@ -19,9 +19,10 @@ import {
   History,
   FolderOpen,
   File,
-  TrendingUp,   // Added
-  AlertCircle,  // Added
-  Target        // Added
+  TrendingUp,   
+  AlertCircle,  
+  Target,
+  BarChart2 // Added for the graph icon
 } from "lucide-react";
 
 const Profile = () => {
@@ -29,6 +30,7 @@ const Profile = () => {
   const navigate = useNavigate();
   const [showSettings, setShowSettings] = useState(false);
   const [showReports, setShowReports] = useState(false);
+  const [hoveredDay, setHoveredDay] = useState(null); // For graph tooltip
 
   // Mock data for past reports
   const pastReports = [
@@ -94,7 +96,7 @@ const Profile = () => {
 
           {/* Profile Photo */}
           <div className="relative group">
-            <div className="absolute -inset-1 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full opacity-0 group-hover:opacity-100 blur transition duration-500"></div>
+            <div className="absolute -inset-1 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-full opacity-0 group-hover:opacity-100 blur transition duration-500"></div>
             {user.photoURL ? (
               <img
                 src={user.photoURL}
@@ -102,11 +104,11 @@ const Profile = () => {
                 className="relative w-28 h-28 md:w-36 md:h-36 rounded-full border-4 border-[#0f172a] object-cover shadow-2xl z-10"
               />
             ) : (
-              <div className="relative w-28 h-28 md:w-36 md:h-36 bg-slate-700 rounded-full flex items-center justify-center text-4xl font-bold border-4 border-[#0f172a] z-10">
+              <div className="relative w-28 h-28 md:w-36 md:h-36 bg-zinc-900 rounded-full flex items-center justify-center text-4xl font-bold border-4 border-black z-10 text-zinc-400">
                 {user.displayName?.charAt(0) || "U"}
               </div>
             )}
-            <div className="absolute bottom-2 right-2 w-6 h-6 bg-green-500 border-4 border-[#1e293b] rounded-full z-20"></div>
+            <div className="absolute bottom-2 right-2 w-6 h-6 bg-emerald-500 border-4 border-black rounded-full z-20"></div>
           </div>
 
           {/* User Info */}
@@ -121,10 +123,10 @@ const Profile = () => {
                 <Pencil size={14} />
               </button>
             </div>
-            <p className="text-slate-400 font-medium text-lg">{user.email}</p>
+            <p className="text-zinc-400 font-medium text-lg">{user.email}</p>
             <div className="flex flex-wrap justify-center md:justify-start gap-3 mt-4">
-              <span className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-green-500/10 text-green-400 border border-green-500/20 text-xs font-semibold">
-                <div className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse"></div> Online
+              <span className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-xs font-semibold">
+                <div className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></div> Online
               </span>
               <span className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-500/10 text-blue-400 border border-blue-500/20 text-xs font-semibold">
                 <ShieldCheck size={12} /> Analyst Tier
@@ -204,7 +206,7 @@ const Profile = () => {
           </div>
         </div>
 
-        {/* EXISTING GRID LAYOUT */}
+        {/* MIDDLE GRID */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
 
           {/* Card 1: Quick Actions */}
@@ -220,7 +222,7 @@ const Profile = () => {
               </button>
               <button
                 onClick={() => setShowReports(true)}
-                className="w-full bg-[#0f172a] hover:bg-slate-800 text-slate-300 hover:text-white py-3.5 px-4 rounded-lg font-medium transition-all flex items-center justify-center gap-2 border border-slate-700 hover:border-slate-600 text-sm group"
+                className="w-full bg-zinc-900 hover:bg-zinc-800 text-zinc-300 hover:text-white py-3.5 px-4 rounded-lg font-medium transition-all flex items-center justify-center gap-2 border border-zinc-800 hover:border-zinc-700 text-sm group"
               >
                 <FolderOpen size={18} className="text-slate-500 group-hover:text-blue-400 transition-colors" />
                 <span>View Past Reports</span>
@@ -236,33 +238,33 @@ const Profile = () => {
             </div>
             <div className="overflow-x-auto flex-1">
               <table className="w-full text-sm text-left">
-                <thead className="text-xs text-slate-400 uppercase bg-slate-800/50">
+                <thead className="text-xs text-zinc-500 uppercase bg-zinc-900/50">
                   <tr>
-                    <th className="px-6 py-4">App Name</th>
-                    <th className="px-6 py-4">Action</th>
-                    <th className="px-6 py-4">Status</th>
+                    <th className="px-6 py-4 font-medium">App Name</th>
+                    <th className="px-6 py-4 font-medium">Action</th>
+                    <th className="px-6 py-4 font-medium">Status</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-700/50">
-                  <tr className="hover:bg-slate-800/30 transition-colors group cursor-pointer">
+                <tbody className="divide-y divide-white/5">
+                  <tr className="hover:bg-zinc-900/30 transition-colors group cursor-pointer">
                     <td className="px-6 py-4 text-white font-medium flex items-center gap-2">
-                      <div className="w-2 h-2 bg-green-500 rounded-full group-hover:shadow-[0_0_8px_rgba(34,197,94,0.6)] transition-shadow"></div> Spotify
+                      <div className="w-2 h-2 bg-emerald-500 rounded-full group-hover:shadow-[0_0_8px_rgba(16,185,129,0.6)] transition-shadow"></div> Spotify
                     </td>
-                    <td className="px-6 py-4 text-slate-300">Deep Analysis</td>
-                    <td className="px-6 py-4"><span className="px-2.5 py-1 rounded-md bg-green-500/10 text-green-400 text-xs font-medium border border-green-500/20">Completed</span></td>
+                    <td className="px-6 py-4 text-zinc-400">Deep Analysis</td>
+                    <td className="px-6 py-4"><span className="px-2.5 py-1 rounded-md bg-emerald-500/10 text-emerald-400 text-xs font-medium border border-emerald-500/20">Completed</span></td>
                   </tr>
-                  <tr className="hover:bg-slate-800/30 transition-colors group cursor-pointer">
+                  <tr className="hover:bg-zinc-900/30 transition-colors group cursor-pointer">
                     <td className="px-6 py-4 text-white font-medium flex items-center gap-2">
                       <div className="w-2 h-2 bg-purple-500 rounded-full group-hover:shadow-[0_0_8px_rgba(168,85,247,0.6)] transition-shadow"></div> Instagram
                     </td>
-                    <td className="px-6 py-4 text-slate-300">Quick Scan</td>
+                    <td className="px-6 py-4 text-zinc-400">Quick Scan</td>
                     <td className="px-6 py-4"><span className="px-2.5 py-1 rounded-md bg-blue-500/10 text-blue-400 text-xs font-medium border border-blue-500/20">Archived</span></td>
                   </tr>
-                  <tr className="hover:bg-slate-800/30 transition-colors group cursor-pointer">
+                  <tr className="hover:bg-zinc-900/30 transition-colors group cursor-pointer">
                     <td className="px-6 py-4 text-white font-medium flex items-center gap-2">
                       <div className="w-2 h-2 bg-orange-500 rounded-full group-hover:shadow-[0_0_8px_rgba(249,115,22,0.6)] transition-shadow"></div> Uber
                     </td>
-                    <td className="px-6 py-4 text-slate-300">Bug Report</td>
+                    <td className="px-6 py-4 text-zinc-400">Bug Report</td>
                     <td className="px-6 py-4"><span className="px-2.5 py-1 rounded-md bg-orange-500/10 text-orange-400 text-xs font-medium border border-orange-500/20">Pending</span></td>
                   </tr>
                 </tbody>
@@ -270,6 +272,61 @@ const Profile = () => {
             </div>
           </div>
         </div>
+
+        {/* --- NEW: USAGE FREQUENCY GRAPH --- */}
+        <div className="bg-[#09090b] rounded-xl border border-white/10 p-6 md:p-8">
+            <div className="flex flex-col md:flex-row justify-between items-end md:items-center mb-6 gap-4">
+                <div>
+                    <h3 className="text-lg font-semibold text-white flex items-center gap-2">
+                        <BarChart2 className="text-indigo-400" size={20} /> Analysis Frequency
+                    </h3>
+                    <p className="text-zinc-500 text-sm mt-1">Your usage activity over the last 14 days.</p>
+                </div>
+                <div className="flex items-center gap-2">
+                    <div className="text-right">
+                        <span className="block text-2xl font-bold text-white">61</span>
+                        <span className="text-xs text-zinc-500">Scans in 14 days</span>
+                    </div>
+                </div>
+            </div>
+
+            {/* The Graph Container */}
+            <div className="w-full h-40 flex items-end justify-between gap-2 md:gap-4 pt-4 border-t border-white/5">
+                {activityData.map((data, index) => (
+                    <div 
+                        key={index} 
+                        className="relative group flex-1 flex flex-col justify-end items-center h-full"
+                        onMouseEnter={() => setHoveredDay(index)}
+                        onMouseLeave={() => setHoveredDay(null)}
+                    >
+                        {/* Tooltip */}
+                        <div className={`absolute -top-10 bg-zinc-800 text-white text-xs py-1 px-2 rounded-md border border-white/10 transition-opacity duration-200 pointer-events-none whitespace-nowrap z-10 ${hoveredDay === index ? 'opacity-100' : 'opacity-0'}`}>
+                            {data.count} Scans • {data.day}
+                            <div className="absolute top-full left-1/2 -translate-x-1/2 -mt-1 border-4 border-transparent border-t-zinc-800"></div>
+                        </div>
+
+                        {/* The Bar */}
+                        <div 
+                            style={{ height: data.height }} 
+                            className={`w-full max-w-[40px] rounded-t-sm transition-all duration-500 ease-out ${
+                                hoveredDay === index 
+                                ? 'bg-indigo-400 shadow-[0_0_15px_rgba(129,140,248,0.5)]' 
+                                : 'bg-zinc-800 hover:bg-zinc-700'
+                            } relative overflow-hidden`}
+                        >
+                             {/* Gradient Overlay for "Active" look */}
+                             <div className="absolute inset-0 bg-gradient-to-t from-indigo-600/40 to-transparent"></div>
+                        </div>
+
+                        {/* X-Axis Label */}
+                        <span className="text-[10px] text-zinc-600 mt-2 font-medium uppercase tracking-wider hidden sm:block">
+                            {data.day}
+                        </span>
+                    </div>
+                ))}
+            </div>
+        </div>
+
       </div>
 
       {/* --- REPORT HISTORY MODAL --- */}

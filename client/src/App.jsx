@@ -2,7 +2,11 @@
 import { AuthProvider } from "./context/AuthContext";
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import Layout from "./components/Layout";
-
+import OnBoarding1 from "./pages/OnBoarding/OnBoarding1";
+import OnBoarding2 from "./pages/OnBoarding/OnBoarding2";
+import OnBoarding3 from "./pages/OnBoarding/OnBoarding3";
+import OnBoarding4 from "./pages/OnBoarding/OnBoarding4";
+import OnBoarding5 from "./pages/OnBoarding/OnBoarding5";
 // Pages
 import Landing from "./pages/Landing";
 import Login from "./pages/Login";
@@ -11,6 +15,7 @@ import VoiceAgent from "./pages/VoiceAgent";
 import Profile from "./pages/Profile";
 import Chatbot from "./pages/Chatbot";
 import AnalyzeApp from "./pages/AnalyzeApp";
+
 
 function App() {
   return (
@@ -37,6 +42,12 @@ function App() {
               <Dashboard />
             </Layout>
           } />
+
+         <Route path="/onboarding" element={<OnBoarding1 />} />
+   <Route path="/onboarding/step-2" element={<OnBoarding2 />} />
+   <Route path="/onboarding/step-3" element={<OnBoarding3 />} />
+   <Route path="/onboarding/step-4" element={<OnBoarding4 />} />
+   <Route path="/onboarding/step-5" element={<OnBoarding5 />} />
 
           <Route path="/voice-agent" element={
             <Layout>
